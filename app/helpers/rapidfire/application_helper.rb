@@ -15,14 +15,17 @@ module Rapidfire
       question_id = question_id.to_s
       option = option.to_s
 
-      params[:filter] ||= {}
-      params[:filter][:question_ids] ||= []
-      params[:filter][:options] ||= []
+      hparams = params.to_unsafe_h.merge(only_path: true, script_name: nil)
 
-      params[:filter][:question_ids].map!(&:to_s)
-      params[:filter][:options].map!(&:to_s)
+      hparams[:filter] ||= {}
+      hparams[:filter][:question_ids] ||= []
+      hparams[:filter][:options] ||= []
 
-      this_filter = params[:filter].deep_dup
+      hparams[:filter][:question_ids].map!(&:to_s)
+      hparams[:filter][:options].map!(&:to_s)
+
+      this_filter = hparams[:filter].deep_dup
+
 
       if this_filter[:question_ids].include?(question_id) && this_filter[:options].include?(option)
         question_index = this_filter[:question_ids].index(question_id)
