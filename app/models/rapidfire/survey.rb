@@ -36,10 +36,14 @@ module Rapidfire
             this_attempt << attempt.user.try(attribute)
           end
 
+          most_recent_answer_time = attempt.updated_at
           questions.each do |question|
-            answer = attempt.answers.detect{|a| a.question_id == question.id }.try(:answer_text)
-            this_attempt << answer
+            answer = attempt.answers.detect{|a| a.question_id == question.id }
+            this_attempt << answer&.answer_text
+            most_recent_answer_time = answer&.updated_at if answer && most_recent_answer_time < answer.updated_at
           end
+
+          this_attempt << most_recent_answer_time
 
           this_attempt << attempt.updated_at
           csv << this_attempt
